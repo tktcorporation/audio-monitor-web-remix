@@ -1,40 +1,50 @@
-# Welcome to Remix!
+# Audio Monitor
 
-- 📖 [Remix docs](https://remix.run/docs)
+A real-time audio monitoring application built with Remix and React.
 
-## Development
+## Features
 
-Run the dev server:
+- Select specific microphone input and audio output devices
+- Listen to your voice in real-time
+- Visualize audio input with a dynamic waveform
+- Monitor audio quality with volume and background noise indicators
+- Record audio and play it back
+- Responsive design with dark mode support
 
-```shellscript
-npm run dev
-```
+## Getting Started
+
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Start the development server: `npm run dev`
+
+## Usage
+
+1. Grant microphone permissions when prompted
+2. Select your desired input (microphone) and output (speaker) devices
+3. Click "Start Listening" to begin monitoring your audio
+4. Use the visualizer and quality feedback to adjust your audio setup
+5. Optionally, record your audio and play it back to check how you sound
+
+## Technologies Used
+
+- Remix
+- React
+- Web Audio API
+- Tailwind CSS
 
 ## Deployment
 
-First, build your app for production:
+This application is deployed on Netlify. To deploy your own instance:
 
-```sh
-npm run build
-```
+1. Fork this repository
+2. Connect your GitHub account to Netlify
+3. Create a new site from your forked repository
+4. Netlify will automatically deploy your site
 
-Then run the app in production mode:
+## Contributing
 
-```sh
-npm start
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Now you'll need to pick a host to deploy it to.
+## License
 
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+This project is open source and available under the [MIT License](LICENSE).

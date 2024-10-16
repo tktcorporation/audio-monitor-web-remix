@@ -7,8 +7,8 @@ import AudioQualityFeedback from "~/components/AudioQualityFeedback";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Audio Monitor" },
-    { name: "description", content: "Monitor your microphone input in real-time" },
+    { title: "Audio Monitor - Real-time Microphone Input Analyzer" },
+    { name: "description", content: "Monitor and analyze your microphone input in real-time, with device selection, audio visualization, and quality feedback." },
   ];
 };
 
