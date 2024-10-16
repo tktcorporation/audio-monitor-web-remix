@@ -1,7 +1,6 @@
-import type { MetaFunction, ActionFunction } from "@remix-run/node";
+import type { MetaFunction, ActionFunction } from "@netlify/remix-runtime";
 import { useState, useEffect, useRef } from "react";
 import { ClientOnly } from "remix-utils/client-only";
-import { useTheme } from "~/utils/ThemeContext";
 import AudioVisualizer from "~/components/AudioVisualizer";
 import AudioControls from "~/components/AudioControls";
 import AudioQualityFeedback from "~/components/AudioQualityFeedback";
@@ -26,8 +25,6 @@ export default function Index() {
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [recordingDuration, setRecordingDuration] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  const { theme, setTheme } = useTheme();
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -174,19 +171,9 @@ export default function Index() {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
       <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Audio Monitor</h1>
-      <button
-        onClick={toggleTheme}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-      >
-        Toggle {theme === "light" ? "Dark" : "Light"} Mode
-      </button>
       <div className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         {error && (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
