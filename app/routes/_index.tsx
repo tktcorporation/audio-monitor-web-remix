@@ -1,9 +1,11 @@
-import type { MetaFunction } from "@netlify/remix-runtime";
+import type { MetaFunction, ActionFunction } from "@remix-run/node";
 import { useState, useEffect, useRef } from "react";
 import { ClientOnly } from "remix-utils/client-only";
+import { useTheme } from "~/utils/ThemeContext";
 import AudioVisualizer from "~/components/AudioVisualizer";
 import AudioControls from "~/components/AudioControls";
 import AudioQualityFeedback from "~/components/AudioQualityFeedback";
+import RecordingControls from "~/components/RecordingControls";
 
 export const meta: MetaFunction = () => {
   return [
@@ -22,6 +24,10 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
+  const [recordingDuration, setRecordingDuration] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const { theme, setTheme } = useTheme();
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -76,19 +82,16 @@ export default function Index() {
       analyserNode.fftSize = 2048;
       source.connect(analyserNode);
 
-      // Create a gain node for volume control
       const gainNode = audioContext.createGain();
-      gainNode.gain.value = 0.5; // Set initial volume to 50%
+      gainNode.gain.value = 0.5;
       analyserNode.connect(gainNode);
 
-      // Connect the gain node to the audio destination (speakers)
       gainNode.connect(audioContext.destination);
 
       setAnalyser(analyserNode);
       setIsListening(true);
       setError(null);
 
-      // Set up audio output for monitoring
       if (audioOutputRef.current) {
         audioOutputRef.current.srcObject = stream;
         if (audioOutputRef.current.setSinkId) {
@@ -137,6 +140,7 @@ export default function Index() {
 
     mediaRecorder.start();
     setIsRecording(true);
+    setRecordingDuration(0);
   };
 
   const stopRecording = () => {
@@ -147,12 +151,17 @@ export default function Index() {
   };
 
   const playRecording = () => {
+    if (isListening) {
+      stopAudioContext();
+    }
     const blob = new Blob(recordedChunks, { type: "audio/webm" });
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     if (audio.setSinkId) {
       audio.setSinkId(selectedOutputDevice).then(() => {
         audio.play();
+        setIsPlaying(true);
+        audio.onended = () => setIsPlaying(false);
       }).catch(err => {
         setError("Error playing recording: " + err.message);
       });
@@ -160,12 +169,24 @@ export default function Index() {
       audio.play().catch(err => {
         setError("Error playing recording: " + err.message);
       });
+      setIsPlaying(true);
+      audio.onended = () => setIsPlaying(false);
     }
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
       <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">Audio Monitor</h1>
+      <button
+        onClick={toggleTheme}
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+      >
+        Toggle {theme === "light" ? "Dark" : "Light"} Mode
+      </button>
       <div className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         {error && (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -184,11 +205,6 @@ export default function Index() {
                 setSelectedOutputDevice={setSelectedOutputDevice}
                 isListening={isListening}
                 toggleListening={toggleListening}
-                isRecording={isRecording}
-                startRecording={startRecording}
-                stopRecording={stopRecording}
-                playRecording={playRecording}
-                hasRecording={recordedChunks.length > 0}
               />
               {isListening && analyser && (
                 <>
@@ -196,6 +212,20 @@ export default function Index() {
                   <AudioQualityFeedback analyser={analyser} />
                 </>
               )}
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Recording Controls</h2>
+                <RecordingControls
+                  isListening={isListening}
+                  isRecording={isRecording}
+                  startRecording={startRecording}
+                  stopRecording={stopRecording}
+                  playRecording={playRecording}
+                  hasRecording={recordedChunks.length > 0}
+                  recordingDuration={recordingDuration}
+                  setRecordingDuration={setRecordingDuration}
+                  isPlaying={isPlaying}
+                />
+              </div>
             </>
           )}
         </ClientOnly>

@@ -38,7 +38,7 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ analyser }) => {
     draw();
   }, [analyser]);
 
-  return <canvas ref={canvasRef} className="w-full h-40 mt-4" />;
+  return <canvas ref={canvasRef} className="w-full h-40 mt-4 bg-gray-800" />;
 };
 
 export default AudioVisualizer;

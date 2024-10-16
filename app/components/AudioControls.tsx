@@ -9,11 +9,6 @@ interface AudioControlsProps {
   setSelectedOutputDevice: (deviceId: string) => void;
   isListening: boolean;
   toggleListening: () => void;
-  isRecording: boolean;
-  startRecording: () => void;
-  stopRecording: () => void;
-  playRecording: () => void;
-  hasRecording: boolean;
 }
 
 const AudioControls: React.FC<AudioControlsProps> = ({
@@ -25,15 +20,10 @@ const AudioControls: React.FC<AudioControlsProps> = ({
   setSelectedOutputDevice,
   isListening,
   toggleListening,
-  isRecording,
-  startRecording,
-  stopRecording,
-  playRecording,
-  hasRecording,
 }) => {
   return (
     <div className="flex flex-col space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <div>
           <label htmlFor="input-device" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Input Device
@@ -79,24 +69,6 @@ const AudioControls: React.FC<AudioControlsProps> = ({
           } text-white`}
         >
           {isListening ? "Stop Listening" : "Start Listening"}
-        </button>
-        <button
-          onClick={isRecording ? stopRecording : startRecording}
-          className={`px-4 py-2 rounded ${
-            isRecording
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white`}
-          disabled={!isListening}
-        >
-          {isRecording ? "Stop Recording" : "Start Recording"}
-        </button>
-        <button
-          onClick={playRecording}
-          className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
-          disabled={!hasRecording}
-        >
-          Play Recording
         </button>
       </div>
     </div>
