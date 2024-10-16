@@ -1,5 +1,5 @@
+import type { MetaFunction } from "@netlify/remix-runtime";
 import { useState, useEffect, useRef } from "react";
-import { MetaFunction } from "@remix-run/node";
 import { ClientOnly } from "remix-utils/client-only";
 import AudioVisualizer from "~/components/AudioVisualizer";
 import AudioControls from "~/components/AudioControls";

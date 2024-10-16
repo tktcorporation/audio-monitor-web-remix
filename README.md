@@ -11,40 +11,71 @@ A real-time audio monitoring application built with Remix and React.
 - Record audio and play it back
 - Responsive design with dark mode support
 
-## Getting Started
+# Welcome to Remix!
 
-1. Clone this repository
-2. Install dependencies: `npm install`
-3. Start the development server: `npm run dev`
+- [Remix Docs](https://remix.run/docs)
+- [Netlify Functions Overview](https://docs.netlify.com/functions/overview)
 
-## Usage
+## Netlify Setup
 
-1. Grant microphone permissions when prompted
-2. Select your desired input (microphone) and output (speaker) devices
-3. Click "Start Listening" to begin monitoring your audio
-4. Use the visualizer and quality feedback to adjust your audio setup
-5. Optionally, record your audio and play it back to check how you sound
+1. Install the [Netlify CLI](https://docs.netlify.com/cli/get-started/):
 
-## Technologies Used
+```sh
+npm i -g netlify-cli
+```
 
-- Remix
-- React
-- Web Audio API
-- Tailwind CSS
+If you have previously installed the Netlify CLI, you should update it to the latest version:
+
+```sh
+npm i -g netlify-cli@latest
+```
+
+2. Sign up and log in to Netlify:
+
+```sh
+netlify login
+```
+
+3. Create a new site:
+
+```sh
+netlify init
+```
+
+## Development
+
+Ensure all packages are installed by running:
+
+```sh
+npm install
+```
+
+Run
+
+```sh
+netlify dev
+```
+
+Open up [http://localhost:8888](http://localhost:8888), and you're ready to go!
+
+### Serve your site locally
+
+To serve your site locally in a production-like environment, run
+
+```sh
+netlify serve
+```
+
+Your site will be available at [http://localhost:8888](http://localhost:8888). Note that it will not auto-reload when you make changes.
 
 ## Deployment
 
-This application is deployed on Netlify. To deploy your own instance:
+There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
 
-1. Fork this repository
-2. Connect your GitHub account to Netlify
-3. Create a new site from your forked repository
-4. Netlify will automatically deploy your site
+```sh
+# preview deployment
+netlify deploy --build
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
+# production deployment
+netlify deploy --build --prod
+```
