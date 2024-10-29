@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useVolumeAnalysis } from "~/hooks/useVolumeAnalysis";
 
 interface PictureInPictureVisualizerProps {
   analyser: AnalyserNode;
@@ -9,14 +10,18 @@ export default function PictureInPictureVisualizer({ analyser, isVisible }: Pict
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>();
+  const { analyzeVolume } = useVolumeAnalysis();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     if (!canvas || !video || !analyser) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
+
+    canvas.width = 320;
+    canvas.height = 240;
 
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
@@ -26,57 +31,83 @@ export default function PictureInPictureVisualizer({ analyser, isVisible }: Pict
 
       analyser.getByteFrequencyData(dataArray);
 
-      // Calculate average audio level
-      const averageLevel = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
-      const normalizedLevel = averageLevel / 255;
+      // 共通の音量解析ロジックを使用
+      const volumeLevel = analyzeVolume(dataArray, bufferLength);
 
-      // Clear canvas
+      // Clear canvas with background
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw audio level indicator
-      const indicatorHeight = canvas.height * 0.8;
-      const indicatorWidth = 40;
-      const x = (canvas.width - indicatorWidth) / 2;
-      const y = (canvas.height - indicatorHeight) / 2;
+      // Enhanced frequency visualization
+      const barWidth = (canvas.width / bufferLength) * 2.5;
+      let x = 0;
 
-      // Background bar
-      ctx.fillStyle = '#333333';
-      ctx.fillRect(x, y, indicatorWidth, indicatorHeight);
+      for (let i = 0; i < bufferLength; i++) {
+        const value = dataArray[i];
+        const normalizedHeight = Math.pow(value / 255, 0.8);
+        const barHeight = normalizedHeight * canvas.height;
 
-      // Active level bar
-      const activeHeight = indicatorHeight * normalizedLevel;
-      const activeY = y + (indicatorHeight - activeHeight);
-      
-      // Gradient for level indicator
-      const gradient = ctx.createLinearGradient(x, y + indicatorHeight, x, y);
+        const hue = (i / bufferLength) * 360;
+        const saturation = 80 + (value / 255) * 20;
+        const lightness = 40 + (value / 255) * 20;
+        ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+
+      // Draw level meter using the common volume level
+      const meterWidth = 30;
+      const meterHeight = canvas.height * 0.8;
+      const meterX = canvas.width - meterWidth - 10;
+      const meterY = (canvas.height - meterHeight) / 2;
+
+      // Meter background
+      ctx.fillStyle = '#333';
+      ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
+
+      // Active meter level with gradient
+      const gradient = ctx.createLinearGradient(meterX, meterY + meterHeight, meterX, meterY);
       gradient.addColorStop(0, '#00ff00');
       gradient.addColorStop(0.6, '#ffff00');
       gradient.addColorStop(1, '#ff0000');
-      
-      ctx.fillStyle = gradient;
-      ctx.fillRect(x, activeY, indicatorWidth, activeHeight);
 
-      // Draw percentage text
+      const activeMeterHeight = meterHeight * (volumeLevel / 100);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(
+        meterX,
+        meterY + meterHeight - activeMeterHeight,
+        meterWidth,
+        activeMeterHeight
+      );
+
+      // Draw level percentage
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 24px Arial';
+      ctx.font = 'bold 16px Arial';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(`${Math.round(normalizedLevel * 100)}%`, canvas.width / 2, y + indicatorHeight + 10);
+      ctx.fillText(
+        `${Math.round(volumeLevel)}%`,
+        meterX + meterWidth / 2,
+        canvas.height - 10
+      );
 
       animationFrameRef.current = requestAnimationFrame(draw);
     };
 
-    const stream = canvas.captureStream();
+    const stream = canvas.captureStream(30);
     video.srcObject = stream;
+    video.play().catch(console.error);
     draw();
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      if (document.pictureInPictureElement === video) {
+        document.exitPictureInPicture().catch(console.error);
+      }
     };
-  }, [analyser]);
+  }, [analyser, analyzeVolume]);
 
   const togglePiP = async () => {
     const video = videoRef.current;
@@ -104,19 +135,19 @@ export default function PictureInPictureVisualizer({ analyser, isVisible }: Pict
         </svg>
         Toggle Picture-in-Picture
       </button>
-      <div className="hidden">
+      <div className="pip-container" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
         <canvas
           ref={canvasRef}
-          width={200}
-          height={300}
-          className="bg-black"
+          width={320}
+          height={240}
         />
         <video
           ref={videoRef}
-          width={200}
-          height={300}
+          width={320}
+          height={240}
           autoPlay
           muted
+          playsInline
         />
       </div>
     </div>
