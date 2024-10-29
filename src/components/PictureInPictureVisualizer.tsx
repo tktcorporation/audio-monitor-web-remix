@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useVolumeAnalysis } from "~/hooks/useVolumeAnalysis";
+import { useVolumeAnalysis } from "../hooks/useVolumeAnalysis";
 
 interface PictureInPictureVisualizerProps {
   analyser: AnalyserNode;

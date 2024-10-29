@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useVolumeAnalysis } from "~/hooks/useVolumeAnalysis";
+import { useVolumeAnalysis } from "../hooks/useVolumeAnalysis";
 
 interface AudioQualityFeedbackProps {
   analyser: AnalyserNode;
