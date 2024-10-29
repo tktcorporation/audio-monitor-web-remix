@@ -1,6 +1,6 @@
 # Audio Monitor
 
-A real-time audio monitoring application built with Remix and React.
+A real-time audio monitoring application built with React and Vite.
 
 ## Features
 
@@ -9,38 +9,8 @@ A real-time audio monitoring application built with Remix and React.
 - Visualize audio input with a dynamic waveform
 - Monitor audio quality with volume and background noise indicators
 - Record audio and play it back
+- Picture-in-Picture support for audio visualization
 - Responsive design with dark mode support
-
-# Welcome to Remix!
-
-- [Remix Docs](https://remix.run/docs)
-- [Netlify Functions Overview](https://docs.netlify.com/functions/overview)
-
-## Netlify Setup
-
-1. Install the [Netlify CLI](https://docs.netlify.com/cli/get-started/):
-
-```sh
-npm i -g netlify-cli
-```
-
-If you have previously installed the Netlify CLI, you should update it to the latest version:
-
-```sh
-npm i -g netlify-cli@latest
-```
-
-2. Sign up and log in to Netlify:
-
-```sh
-netlify login
-```
-
-3. Create a new site:
-
-```sh
-netlify init
-```
 
 ## Development
 
@@ -50,32 +20,22 @@ Ensure all packages are installed by running:
 npm install
 ```
 
-Run
+Start the development server:
 
 ```sh
-netlify dev
+npm run dev
 ```
 
-Open up [http://localhost:8888](http://localhost:8888), and you're ready to go!
+## Building for Production
 
-### Serve your site locally
-
-To serve your site locally in a production-like environment, run
+To build the application for production:
 
 ```sh
-netlify serve
+npm run build
 ```
 
-Your site will be available at [http://localhost:8888](http://localhost:8888). Note that it will not auto-reload when you make changes.
-
-## Deployment
-
-There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
+To preview the production build locally:
 
 ```sh
-# preview deployment
-netlify deploy --build
-
-# production deployment
-netlify deploy --build --prod
+npm run preview
 ```
