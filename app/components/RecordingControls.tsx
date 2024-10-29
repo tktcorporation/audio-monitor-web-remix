@@ -70,11 +70,6 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
           <span className="text-lg font-semibold text-red-500">Recording: {formatTime(recordingDuration)}</span>
         </div>
       )}
-      {!isListening && (
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Start listening to enable recording
-        </p>
-      )}
       {hasRecording && !isRecording && (
         <p className="text-sm text-green-600 dark:text-green-400">
           Recording available for playback (Duration: {formatTime(recordingDuration)})

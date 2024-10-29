@@ -7,8 +7,8 @@ interface AudioControlsProps {
   selectedOutputDevice: string;
   setSelectedInputDevice: (deviceId: string) => void;
   setSelectedOutputDevice: (deviceId: string) => void;
-  isListening: boolean;
-  toggleListening: () => void;
+  isOutputEnabled: boolean;
+  toggleOutput: () => void;
 }
 
 const AudioControls: React.FC<AudioControlsProps> = ({
@@ -18,8 +18,8 @@ const AudioControls: React.FC<AudioControlsProps> = ({
   selectedOutputDevice,
   setSelectedInputDevice,
   setSelectedOutputDevice,
-  isListening,
-  toggleListening,
+  isOutputEnabled,
+  toggleOutput,
 }) => {
   return (
     <div className="flex flex-col space-y-4">
@@ -61,14 +61,14 @@ const AudioControls: React.FC<AudioControlsProps> = ({
       </div>
       <div className="flex space-x-2">
         <button
-          onClick={toggleListening}
+          onClick={toggleOutput}
           className={`px-4 py-2 rounded ${
-            isListening
+            isOutputEnabled
               ? "bg-red-500 hover:bg-red-600"
               : "bg-green-500 hover:bg-green-600"
           } text-white`}
         >
-          {isListening ? "Stop Listening" : "Start Listening"}
+          {isOutputEnabled ? "Mute Audio Output" : "Enable Audio Output"}
         </button>
       </div>
     </div>
