@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface UseAudioContextProps {
   selectedInputDevice: string;
@@ -15,8 +15,9 @@ export function useAudioContext({ selectedInputDevice, selectedOutputDevice }: U
   const audioOutputRef = useRef<HTMLAudioElement | null>(null);
   const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const isOutputEnabledRef = useRef(false);
 
-  const initializeAudioContext = async () => {
+  const initializeAudioContext = useCallback(async () => {
     try {
       // Clean up existing audio context if it exists
       if (audioContextRef.current?.state !== 'closed') {
@@ -35,7 +36,10 @@ export function useAudioContext({ selectedInputDevice, selectedOutputDevice }: U
       streamRef.current = stream;
 
       // Create new audio context
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const AudioContextConstructor = window.AudioContext ||
+        (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextConstructor) throw new Error('Web Audio is not supported');
+      const audioContext = new AudioContextConstructor();
       audioContextRef.current = audioContext;
 
       // Create and connect nodes
@@ -48,7 +52,7 @@ export function useAudioContext({ selectedInputDevice, selectedOutputDevice }: U
 
       const gainNode = audioContext.createGain();
       gainNodeRef.current = gainNode;
-      gainNode.gain.value = isOutputEnabled ? 0.5 : 0;
+      gainNode.gain.value = isOutputEnabledRef.current ? 0.5 : 0;
       analyserNode.connect(gainNode);
       gainNode.connect(audioContext.destination);
 
@@ -66,9 +70,9 @@ export function useAudioContext({ selectedInputDevice, selectedOutputDevice }: U
       setError("Error initializing audio context: " + (err as Error).message);
       setAnalyser(null);
     }
-  };
+  }, [selectedInputDevice, selectedOutputDevice]);
 
-  const cleanupAudio = async () => {
+  const cleanupAudio = useCallback(async () => {
     try {
       if (gainNodeRef.current) {
         gainNodeRef.current.disconnect();
@@ -88,12 +92,14 @@ export function useAudioContext({ selectedInputDevice, selectedOutputDevice }: U
     } catch (err) {
       console.error('Error cleaning up audio:', err);
     }
-  };
+  }, []);
 
   const toggleOutput = () => {
     if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = isOutputEnabled ? 0 : 0.5;
-      setIsOutputEnabled(!isOutputEnabled);
+      const enabled = !isOutputEnabledRef.current;
+      isOutputEnabledRef.current = enabled;
+      gainNodeRef.current.gain.value = enabled ? 0.5 : 0;
+      setIsOutputEnabled(enabled);
     }
   };
 
@@ -102,7 +108,7 @@ export function useAudioContext({ selectedInputDevice, selectedOutputDevice }: U
     return () => {
       cleanupAudio();
     };
-  }, [selectedInputDevice, selectedOutputDevice]);
+  }, [initializeAudioContext, cleanupAudio]);
 
   // Handle output device changes
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 interface RecordingControlsProps {
   isListening: boolean;
@@ -24,17 +24,13 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   isPlaying,
 }) => {
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRecording) {
-      interval = setInterval(() => {
-        setRecordingDuration((prevTime) => prevTime + 1);
-      }, 1000);
-    } else if (!isRecording && recordingDuration !== 0) {
-      clearInterval(interval);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
+    if (!isRecording) return;
+
+    const interval = window.setInterval(() => {
+      setRecordingDuration((prevTime) => prevTime + 1);
+    }, 1000);
+
+    return () => window.clearInterval(interval);
   }, [isRecording, setRecordingDuration]);
 
   const formatTime = (seconds: number) => {

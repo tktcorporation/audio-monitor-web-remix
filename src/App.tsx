@@ -1,17 +1,14 @@
-import { useState } from 'react';
 import { ClientOnly } from './components/ClientOnly';
 import { AudioVisualizer } from './components/AudioVisualizer/AudioVisualizer';
 import AudioControls from './components/AudioControls';
 import AudioQualityFeedback from './components/AudioQualityFeedback';
 import RecordingControls from './components/RecordingControls';
 import { PiPContainer, PiPProvider } from './components/PictureInPicture';
-import { useDocumentVisibility } from './hooks/useDocumentVisibility';
 import { useAudioDevices } from './hooks/useAudioDevices';
 import { useAudioContext } from './hooks/useAudioContext';
 import { useRecording } from './hooks/useRecording';
 
 export function App() {
-  const isVisible = useDocumentVisibility();
   const {
     inputDevices,
     outputDevices,
@@ -45,8 +42,7 @@ export function App() {
     stopRecording,
     playRecording
   } = useRecording({
-    streamRef,
-    isListening: true
+    streamRef
   });
 
   const handlePlayRecording = () => {

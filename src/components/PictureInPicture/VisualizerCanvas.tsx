@@ -113,7 +113,7 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [analyser, analyzeVolume, isPiPActive]);
+  }, [analyser, analyzeVolume, isPiPActive, videoRef]);
 
   return (
     <canvas
