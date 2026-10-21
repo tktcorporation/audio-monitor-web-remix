@@ -3,10 +3,9 @@ import { useVolumeAnalysis } from "../hooks/useVolumeAnalysis";
 
 interface PictureInPictureVisualizerProps {
   analyser: AnalyserNode;
-  isVisible: boolean;
 }
 
-export default function PictureInPictureVisualizer({ analyser, isVisible }: PictureInPictureVisualizerProps) {
+export default function PictureInPictureVisualizer({ analyser }: PictureInPictureVisualizerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>();

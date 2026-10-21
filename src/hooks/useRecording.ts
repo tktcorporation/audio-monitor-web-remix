@@ -2,10 +2,9 @@ import { useState, useRef } from 'react';
 
 interface UseRecordingProps {
   streamRef: React.RefObject<MediaStream | null>;
-  isListening: boolean;
 }
 
-export function useRecording({ streamRef, isListening }: UseRecordingProps) {
+export function useRecording({ streamRef }: UseRecordingProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
